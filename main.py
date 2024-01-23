@@ -158,8 +158,8 @@ def predic(imh):
         plt.show()
         from openai import OpenAI
 
-        # os.environ["OPENAI_API_KEY"] = "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"
-        os.environ["OPENAI_API_KEY"] = "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"
+       
+        os.environ["OPENAI_API_KEY"] = "api key"
 
         client = OpenAI()
         encoded_image = encode_image(f"C:/Users/nagar/PycharmProjects/ondc/content/imbox_{i + 1}.jpg")
