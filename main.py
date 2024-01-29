@@ -15,7 +15,8 @@ from matplotlib import pyplot as plt
 from IPython.display import display
 from IPython.display import Markdown
 import base64
-
+from google.cloud import storage
+from datetime import datetime, timedelta
 # Function to encode the image
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
@@ -140,9 +141,10 @@ def predic(imh):
         # plt.title(f"Object {i+1}")
         # plt.show()
     # Or use `os.getenv('GOOGLE_API_KEY')` to fetch an environment variable.
-    GOOGLE_API_KEY = "AIzaSyCkeJUUMZGkD9DxXoz_XfsK7JF8a3NPfMQ"
+    GOOGLE_API_KEY = "no need"
 
     genai.configure(api_key=GOOGLE_API_KEY)
+
     for i in range(nob):
         img = Image.open(f'C:/Users/nagar/PycharmProjects/ondc/content/imbox_{i + 1}.jpg')
         print("image shape is")
@@ -151,15 +153,36 @@ def predic(imh):
 
         #mode = genai.GenerativeModel('gemini-pro-vision')
 
+
         plt.figure(figsize=(5, 5))
         plt.imshow(img)
         plt.axis('off')
         plt.title(f"Object {i + 1}")
         plt.show()
+        print(f"uploading object{i+1} to bucket")
+        from google.cloud import storage
+
+        # Create a client
+        client = storage.Client()
+
+        # Specify the bucket and blob names
+        bucket_name = 'onboarduser-images'  # Replace with your actual bucket name
+        blob_name = 'output/image.jpg'
+        local_file_path = f'C:/Users/nagar/PycharmProjects/ondc/content/imbox_{i + 1}.jpg'
+
+        # Access the bucket and blob
+        bucket = client.bucket(bucket_name)
+        blob = bucket.blob(blob_name)
+
+        # Upload the local file to the specified blob
+        blob.upload_from_filename(local_file_path)
+
+
+        print(f"File {local_file_path} uploaded to gs://{bucket_name}/{blob_name}")
         from openai import OpenAI
 
-       
-        os.environ["OPENAI_API_KEY"] = "api key"
+        
+        os.environ["OPENAI_API_KEY"] = "open ai api key"
 
         client = OpenAI()
         encoded_image = encode_image(f"C:/Users/nagar/PycharmProjects/ondc/content/imbox_{i + 1}.jpg")
@@ -184,22 +207,52 @@ def predic(imh):
             ],
             max_tokens=300,
         )
-        t=response.choices[0]
+        t=response.choices[0].message.content
 
-        print(f"Object_{i+1}:{response.choices[0]}")
+        #print(f"Object_{i+1}:{response.choices[0]}")
         #response = mode.generate_content(
          #   [f"What is the name of product and price for the white box background with blue coloured numeral {i + 1}?",
           #   img], stream=True)
         #response.resolve()
         #print(f"Object_{i + 1}:{response.text}")
-        temp=[]
-        temp.append(t)
-        temp.append(f"C:/Users/nagar/PycharmProjects/ondc/output/object_{i + 1}.jpg")
+        temp={}
+
+        temp = {
+            "description": t,
+            "image": f"C:/projects/ondc/ondc/output/imbox_{i + 1}.jpg"
+        }
+
+        print(temp)
         rt.append(temp)
+    print(rt)
     return rt
 
-k=predic("C:/Users/nagar/PycharmProjects/ondc/content/electrical.jpg")
-print(k)
+#os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/nagar/PycharmProjects/ondc/keyfile.json"
+#GOOGLE_APPLICATION_CREDENTIALS="C:/Users/nagar/PycharmProjects/ondc/keyfile.json"
+from google.cloud import storage
+client = storage.Client()
+
+bucket_name = 'onboarduser-images'  # Replace with your actual bucket name
+blob_name = '/input/object2.jpeg'  # Replace with your actual blob name
+
+
+bucket = client.bucket(bucket_name)
+blob = bucket.blob(blob_name)
+
+expiration_time = datetime.utcnow() + timedelta(seconds=3600)
+
+serving_url = blob.generate_signed_url(expiration=expiration_time)
+
+print(f"Serving URL: {serving_url}")
+
+#tes = Image.open(serving_url)
+#plt.figure(figsize=(5, 5))
+#plt.imshow(tes)
+#plt.axis('off')
+#plt.title("test")
+#plt.show()
+#k=predic("C:/Users/nagar/PycharmProjects/ondc/content/electrical.jpg")
+#print(k)
 
 
 
