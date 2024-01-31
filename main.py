@@ -159,23 +159,6 @@ def predic(imh):
         plt.axis('off')
         plt.title(f"Object {i + 1}")
         plt.show()
-        print(f"uploading object{i+1} to bucket")
-        from google.cloud import storage
-
-        # Create a client
-        client = storage.Client()
-
-        # Specify the bucket and blob names
-        bucket_name = 'onboarduser-images'  # Replace with your actual bucket name
-        blob_name = f'output/image_{i + 1}.jpg'
-        local_file_path = f'/tmp/object_{i + 1}.jpg'
-
-        # Access the bucket and blob
-        bucket = client.bucket(bucket_name)
-        blob = bucket.blob(blob_name)
-
-        # Upload the local file to the specified blob
-        blob.upload_from_filename(local_file_path)
 
 
         print(f"File {local_file_path} uploaded to gs://{bucket_name}/{blob_name}")
@@ -216,9 +199,31 @@ def predic(imh):
         #response.resolve()
         #print(f"Object_{i + 1}:{response.text}")
         temp={}
+        
+        print(f"uploading object{i+1} to bucket")
+        from google.cloud import storage
+
+        # Create a client
+        client = storage.Client()
+
+        # Specify the bucket and blob names
+        bucket_name = 'onboarduser-images'  # Replace with your actual bucket name
+        blob_name = f'output/image_{i + 1}.jpg'
+        local_file_path = f'/tmp/object_{i + 1}.jpg'
+
+        # Access the bucket and blob
+        bucket = client.bucket(bucket_name)
+        blob = bucket.blob(blob_name)
+
+        # Upload the local file to the specified blob
+        blob.upload_from_filename(local_file_path)
+        expiration_time = datetime.utcnow() + timedelta(seconds=3600)
+        serving_url = blob.generate_signed_url(expiration=expiration_time)
+        print(f"Serving URL: {serving_url}")
 
         temp = {
             "description": t,
+            "url":serving_url
         }
 
         print(temp)
