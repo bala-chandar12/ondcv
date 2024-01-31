@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 def download(url):
     response = requests.get(url)
-    with open("C:/Users/nagar/PycharmProjects/ondc/content/local_image.jpg", "wb") as f:
+    with open("/tmp/local_image.jpg", "wb") as f:
         f.write(response.content)
 
 
@@ -24,7 +24,7 @@ def post_data():
     time.sleep(2)
 
 
-    res=predic("C:/Users/nagar/PycharmProjects/ondc/content/local_image.jpg")
+    res=predic("/tmp/local_image.jpg")
    
 
 

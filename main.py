@@ -92,7 +92,7 @@ def predic(imh):
 
         # Draw text on the image
         cv2.putText(image, text, text_position, cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
-        imbox = f"C:/Users/nagar/PycharmProjects/ondc/content/imbox_{i + 1}.jpg"
+        imbox = f"/tmp/imbox_{i + 1}.jpg"
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         cv2.imwrite(imbox, image)
         #####
@@ -107,7 +107,7 @@ def predic(imh):
     # cv2.destroyAllWindows()
 
     # Save the image with bounding boxes
-    # imageboxes = "C:/Users/nagar/PycharmProjects/ondc/content/image_with_boxes.jpg"
+    # imageboxes = "/tmp/image_with_boxes.jpg"
     # cv2.imwrite(imageboxes, image)
 
 
@@ -131,7 +131,7 @@ def predic(imh):
         cropped_object_rgb = cv2.cvtColor(cropped_object, cv2.COLOR_BGR2RGB)
 
         # Save each cropped object
-        filename = f"C:/Users/nagar/PycharmProjects/ondc/output/object_{i + 1}.jpg"  # Change the filename as needed
+        filename = f"/tmp/object_{i + 1}.jpg"  # Change the filename as needed
         cv2.imwrite(filename, cropped_object_rgb)  # Save the cropped object
 
         # Display each cropped object using matplotlib
@@ -146,7 +146,7 @@ def predic(imh):
     genai.configure(api_key=GOOGLE_API_KEY)
 
     for i in range(nob):
-        img = Image.open(f'C:/Users/nagar/PycharmProjects/ondc/content/imbox_{i + 1}.jpg')
+        img = Image.open(f'/tmp/imbox_{i + 1}.jpg')
         print("image shape is")
         cv2.imread("")
 
@@ -167,8 +167,8 @@ def predic(imh):
 
         # Specify the bucket and blob names
         bucket_name = 'onboarduser-images'  # Replace with your actual bucket name
-        blob_name = 'output/image.jpg'
-        local_file_path = f'C:/Users/nagar/PycharmProjects/ondc/content/imbox_{i + 1}.jpg'
+        blob_name = f'output/image_{i + 1}.jpg'
+        local_file_path = f'/tmp/object_{i + 1}.jpg'
 
         # Access the bucket and blob
         bucket = client.bucket(bucket_name)
@@ -182,10 +182,10 @@ def predic(imh):
         from openai import OpenAI
 
         
-        os.environ["OPENAI_API_KEY"] = "open ai api key"
+        os.environ["OPENAI_API_KEY"] = "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"
 
         client = OpenAI()
-        encoded_image = encode_image(f"C:/Users/nagar/PycharmProjects/ondc/content/imbox_{i + 1}.jpg")
+        encoded_image = encode_image(f"/tmp/imbox_{i + 1}.jpg")
 
         # OpenAI.OPENAI_API_KEY = os.environ['']
 
@@ -219,7 +219,6 @@ def predic(imh):
 
         temp = {
             "description": t,
-            "image": f"C:/projects/ondc/ondc/output/imbox_{i + 1}.jpg"
         }
 
         print(temp)
@@ -233,7 +232,7 @@ from google.cloud import storage
 client = storage.Client()
 
 bucket_name = 'onboarduser-images'  # Replace with your actual bucket name
-blob_name = '/input/object2.jpeg'  # Replace with your actual blob name
+blob_name = 'input/object2.jpeg'  # Replace with your actual blob name
 
 
 bucket = client.bucket(bucket_name)
@@ -251,7 +250,7 @@ print(f"Serving URL: {serving_url}")
 #plt.axis('off')
 #plt.title("test")
 #plt.show()
-#k=predic("C:/Users/nagar/PycharmProjects/ondc/content/electrical.jpg")
+#k=predic("/tmp/electrical.jpg")
 #print(k)
 
 
